@@ -33,8 +33,8 @@ class MyNetwork(object):
     def _build_placeholder(self):
         """Build placeholders."""
 
-        # TODO: Get shape for placeholder
-        x_in_shp = TODO
+        # done: Get shape for placeholder
+        x_in_shp = (None, self.x_shp[1])
 
         # Create Placeholders for inputs
         self.x_in = tf.placeholder(tf.float32, shape=x_in_shp)
@@ -44,21 +44,21 @@ class MyNetwork(object):
         """Build preprocessing related graph."""
 
         with tf.variable_scope("Normalization", reuse=tf.AUTO_REUSE):
-            # TODO: we will make `n_mean`, `n_range`, `n_mean_in` and
+            # done: we will make `n_mean`, `n_range`, `n_mean_in` and
             # `n_range_in` as scalar this time! This is how we often use in
             # CNNs, as we KNOW that these are image pixels, and all pixels
             # should be treated equally!
 
             # Create placeholders for saving mean, range to a TF variable for
             # easy save/load. Create these variables as well.
-            self.n_mean_in = tf.placeholder(tf.float32, shape=TODO)
-            self.n_range_in = tf.placeholder(tf.float32, shape=TODO)
+            self.n_mean_in = tf.placeholder(tf.float32, shape=())
+            self.n_range_in = tf.placeholder(tf.float32, shape=())
             # Make the normalization as a TensorFlow variable. This is to make
             # sure we save it in the graph
             self.n_mean = tf.get_variable(
-                "n_mean", shape=TODO, trainable=False)
+                "n_mean", shape=(), trainable=False)
             self.n_range = tf.get_variable(
-                "n_range", shape=TODO, trainable=False)
+                "n_range", shape=(), trainable=False)
             # Assign op to store this value to TF variable
             self.n_assign_op = tf.group(
                 tf.assign(self.n_mean, self.n_mean_in),
@@ -83,10 +83,10 @@ class MyNetwork(object):
             # TODO: Convolutional layer 0. Make output shape become 32 > 28 >
             # 14 as we do convolution and pooling. We will also use the
             # argument from the configuration to determine the number of
-            # filters for the inital conv layer. Have `num_unit` of filters,
+            # filters for the initial conv layer. Have `num_unit` of filters,
             # use the kernel_initializer above.
-            num_unit = TODO
-            cur_in = TODO
+            num_unit = self.config.num_unit
+            cur_in = tf.layers.conv2d()
             # Activation
             cur_in = activ(cur_in)
             # TODO: use `tf.layers.max_pooling2d` to see how it should run. If
@@ -178,18 +178,20 @@ class MyNetwork(object):
             self.pred = tf.argmax(self.logits, axis=1)
             self.acc = tf.reduce_mean(
                 tf.to_float(tf.equal(self.pred, self.y_in))
-            )
+            ) / tf.to_float(tf.shape(self.y_in)[0])
 
             # Record summary for accuracy
             tf.summary.scalar("accuracy", self.acc)
 
-            # TODO: We also want to save best validation accuracy. So we do
+            # done: We also want to save best validation accuracy. So we do
             # something similar to what we did before with n_mean. Note that
             # these will also be a scalar variable
-            self.best_va_acc_in = TODO
-            self.best_va_acc = TODO
-            # TODO: Assign op to store this value to TF variable
-            self.acc_assign_op = TODO
+            self.best_va_acc_in = tf.placeholder(
+                tf.float32, shape=())
+            self.best_va_acc = tf.get_variable(
+                "best_ca_acc", shape=(), trainable=False)
+            # done: Assign op to store this value to TF variable
+            self.acc_assign_op = tf.assign(self.best_va_acc, self.best_va_acc_in)
 
     def _build_summary(self):
         """Build summary ops."""
@@ -260,17 +262,27 @@ class MyNetwork(object):
                 self.n_range_in: x_tr_range,
             })
 
-            # TODO: Check if previous train exists
-            b_resume = TODO
+            # done: Check if previous train exists
+            b_resume = tf.train.latest_checkpoint(
+                self.config.log_dir)
             if b_resume:
-                # TODO: Restore network
+                # done: Restore network
                 print("Restoring from {}...".format(
                     self.config.log_dir))
-                TODO
-                # TODO: restore number of steps so far
-                step = TODO
-                # TODO: restore best acc
-                best_acc = TODO
+                self.saver_best.restore(
+                    sess,
+                    b_resume
+                )
+                res = sess.run(
+                    fetches={
+                        "global_step": self.global_step,   
+                        "acc": self.acc
+                    }
+                )
+                # done: restore number of steps so far
+                step = res["global_step"]
+                # done: restore best acc
+                best_acc = res["acc"]
             else:
                 print("Starting from scratch...")
                 step = 0
@@ -439,6 +451,11 @@ def main(config):
     x_va = x_trva[num_tr:]
     y_tr = y_trva[:num_tr]
     y_va = y_trva[num_tr:]
+
+    # ----------------------------------------
+    print(x_tr.shape)
+    exit()
+    # ----------------------------------------
 
     # ----------------------------------------
     # Init network class
