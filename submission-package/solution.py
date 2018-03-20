@@ -8,7 +8,6 @@ from config import get_config, print_usage
 from utils.cifar10 import load_data
 
 data_dir = "/Users/kwang/Downloads/cifar-10-batches-py"
-TODO = None
 
 
 class MyNetwork(object):
@@ -35,7 +34,7 @@ class MyNetwork(object):
         """Build placeholders."""
 
         # done: Get shape for placeholder
-        x_in_shp = (None, self.x_shp[1])
+        x_in_shp = (None, self.x_shp[1], self.x_shp[2], self.x_shp[3])
 
         # Create Placeholders for inputs
         self.x_in = tf.placeholder(tf.float32, shape=x_in_shp)
@@ -81,6 +80,7 @@ class MyNetwork(object):
         with tf.variable_scope("Network", reuse=tf.AUTO_REUSE):
             # Normalize using the above training-time statistics
             cur_in = (self.x_in - self.n_mean) / self.n_range
+
             # done: Convolutional layer 0. Make output shape become 32 > 28 >
             # 14 as we do convolution and pooling. We will also use the
             # argument from the configuration to determine the number of
@@ -94,7 +94,7 @@ class MyNetwork(object):
             # done: use `tf.layers.max_pooling2d` to see how it should run. If
             # you want to try different pooling strategies, add it as another
             # config option. Be sure to have the max_pooling implemented.
-            cur_in = tf.layers.max_pooling2d(cur_in, 15, 1)
+            cur_in = tf.layers.max_pooling2d(cur_in, 2, 2)
             # done: double the number of filters we will use after pooling
             num_unit *= 2
             # done: Convolutional layer 1. Make output shape become 14 > 12 > 6
@@ -105,7 +105,7 @@ class MyNetwork(object):
             # Activation
             cur_in = activ(cur_in)
             # done: max pooling
-            cur_in = tf.layers.max_pooling2d(cur_in, 7, 1)
+            cur_in = tf.layers.max_pooling2d(cur_in, 2, 2)
             # done: double the number of filters we will use after pooling
             num_unit *= 2
             # done: Convolutional layer 2. Make output shape become 6 > 4 > 2
@@ -116,7 +116,7 @@ class MyNetwork(object):
             # Activation
             cur_in = activ(cur_in)
             # done: max pooling
-            cur_in = tf.layers.max_pooling2d(cur_in, 3, 1)
+            cur_in = tf.layers.max_pooling2d(cur_in, 2, 2)
             # done: Flatten to put into FC layer with `tf.layers.flatten`
             cur_in = tf.layers.flatten(cur_in)
             # Hidden layers
@@ -193,7 +193,7 @@ class MyNetwork(object):
             self.best_va_acc_in = tf.placeholder(
                 tf.float32, shape=())
             self.best_va_acc = tf.get_variable(
-                "best_ca_acc", shape=(), trainable=False)
+                "best_va_acc", shape=(), trainable=False)
             # done: Assign op to store this value to TF variable
             self.acc_assign_op = tf.assign(self.best_va_acc, self.best_va_acc_in)
 
@@ -378,7 +378,7 @@ class MyNetwork(object):
                     if res["acc"] > best_acc:
                         best_acc = res["acc"]
                         # TODO: Write best acc to TF variable
-                        TODO
+                        self.acc_assign_op = tf.assign(self.best_va_acc, self.best_va_acc_in)
                         # Save the best model
                         self.saver_best.save(
                             sess, self.save_file_best,
