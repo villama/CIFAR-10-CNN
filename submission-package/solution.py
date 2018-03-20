@@ -8,6 +8,7 @@ from config import get_config, print_usage
 from utils.cifar10 import load_data
 
 data_dir = "/Users/kwang/Downloads/cifar-10-batches-py"
+TODO = None
 
 
 class MyNetwork(object):
@@ -302,12 +303,12 @@ class MyNetwork(object):
                 x_b = np.array([x_tr[_i] for _i in ind_cur])
                 y_b = np.array([y_tr[_i] for _i in ind_cur])
 
-                # TODO: Write summary every N iterations as well as the first
+                # done: Write summary every N iterations as well as the first
                 # iteration. Use `self.config.report_freq`. Make sure that we
                 # write at the first iteration, and every kN iterations where k
                 # is an interger. HINT: we write the summary after we do the
                 # optimization.
-                b_write_summary = TODO
+                b_write_summary = (step % self.config.report_freq == 0)
                 if b_write_summary:
                     fetches = {
                         "optim": self.optim,
@@ -328,12 +329,12 @@ class MyNetwork(object):
                     },
                 )
 
-                # TODO: Write Training Summary if we fetched it (don't write
+                # done: Write Training Summary if we fetched it (don't write
                 # meta graph). See that we actually don't need the above
                 # `b_write_summary` actually :-). I know that we can check this
                 # with b_write_summary, but let's check `res` to do this as an
                 # exercise.
-                if TODO:
+                if b_write_summary:
                     self.summary_tr.add_summary(
                         res["summary"], global_step=res["global_step"],
                     )
@@ -347,11 +348,11 @@ class MyNetwork(object):
                         write_meta_graph=False,
                     )
 
-                # TODO: Validate every N iterations and at the first
+                # done: Validate every N iterations and at the first
                 # iteration. Use `self.config.val_freq`. Make sure that we
                 # validate at the correct iterations. HINT: should be similar
                 # to above.
-                b_validate = TODO
+                b_validate = (step % self.config.val_freq == 0)
                 if b_validate:
                     res = sess.run(
                         fetches={
