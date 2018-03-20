@@ -1,4 +1,4 @@
-
+*.DS_Store
 submission-package/cifar-10-batches-py/
 submission-package/__pycache__/
 submission-package/utils/__pycache__/
