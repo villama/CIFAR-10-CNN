@@ -81,41 +81,44 @@ class MyNetwork(object):
         with tf.variable_scope("Network", reuse=tf.AUTO_REUSE):
             # Normalize using the above training-time statistics
             cur_in = (self.x_in - self.n_mean) / self.n_range
-            # TODO: Convolutional layer 0. Make output shape become 32 > 28 >
+            # done: Convolutional layer 0. Make output shape become 32 > 28 >
             # 14 as we do convolution and pooling. We will also use the
             # argument from the configuration to determine the number of
             # filters for the initial conv layer. Have `num_unit` of filters,
             # use the kernel_initializer above.
-            num_unit = self.config.num_unit
-            cur_in = tf.layers.conv2d()
+            num_unit = self.config.num_conv_base
+            cur_in = tf.layers.conv2d(cur_in, num_unit, 5,
+                                      kernel_initializer=kernel_initializer)
             # Activation
             cur_in = activ(cur_in)
-            # TODO: use `tf.layers.max_pooling2d` to see how it should run. If
+            # done: use `tf.layers.max_pooling2d` to see how it should run. If
             # you want to try different pooling strategies, add it as another
             # config option. Be sure to have the max_pooling implemented.
-            cur_in = TODO
-            # TODO: double the number of filters we will use after pooling
-            TODO
-            # TODO: Convolutional layer 1. Make output shape become 14 > 12 > 6
+            cur_in = tf.layers.max_pooling2d(cur_in, 15, 1)
+            # done: double the number of filters we will use after pooling
+            num_unit *= 2
+            # done: Convolutional layer 1. Make output shape become 14 > 12 > 6
             # as we do convolution and pooling. Have `num_unit` of filters,
             # use the kernel_initializer above.
-            cur_in = TODO
+            cur_in = tf.layers.conv2d(cur_in, num_unit, 3,
+                                      kernel_initializer=kernel_initializer)
             # Activation
             cur_in = activ(cur_in)
-            # TODO: max pooling
-            cur_in = TODO
-            # TODO: double the number of filters we will use after pooling
-            TODO
-            # TODO: Convolutional layer 2. Make output shape become 6 > 4 > 2
+            # done: max pooling
+            cur_in = tf.layers.max_pooling2d(cur_in, 7, 1)
+            # done: double the number of filters we will use after pooling
+            num_unit *= 2
+            # done: Convolutional layer 2. Make output shape become 6 > 4 > 2
             # as we do convolution and pooling. Have `num_unit` of filters,
             # use the kernel_initializer above.
-            cur_in = TODO
+            cur_in = tf.layers.conv2d(cur_in, num_unit, 3,
+                                      kernel_initializer=kernel_initializer)
             # Activation
             cur_in = activ(cur_in)
-            # TODO: max pooling
-            cur_in = TODO
-            # TODO: Flatten to put into FC layer with `tf.layers.flatten`
-            cur_in = TODO
+            # done: max pooling
+            cur_in = tf.layers.max_pooling2d(cur_in, 3, 1)
+            # done: Flatten to put into FC layer with `tf.layers.flatten`
+            cur_in = tf.layers.flatten(cur_in)
             # Hidden layers
             num_unit = self.config.num_unit
             for _i in range(self.config.num_hidden):
@@ -452,11 +455,6 @@ def main(config):
     x_va = x_trva[num_tr:]
     y_tr = y_trva[:num_tr]
     y_va = y_trva[num_tr:]
-
-    # ----------------------------------------
-    print(x_tr.shape)
-    exit()
-    # ----------------------------------------
 
     # ----------------------------------------
     # Init network class
