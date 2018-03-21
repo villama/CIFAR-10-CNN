@@ -182,7 +182,7 @@ class MyNetwork(object):
             self.pred = tf.argmax(self.logits, axis=1)
             self.acc = tf.reduce_mean(
                 tf.to_float(tf.equal(self.pred, self.y_in))
-            ) / tf.to_float(tf.shape(self.y_in)[0])
+            )
 
             # Record summary for accuracy
             tf.summary.scalar("accuracy", self.acc)
