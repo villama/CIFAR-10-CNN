@@ -265,6 +265,7 @@ class MyNetwork(object):
                 self.n_mean_in: x_tr_mean,
                 self.n_range_in: x_tr_range,
             })
+            # exit()
 
             # done: Check if previous train exists
             b_resume = tf.train.latest_checkpoint(
@@ -280,13 +281,13 @@ class MyNetwork(object):
                 res = sess.run(
                     fetches={
                         "global_step": self.global_step,   
-                        "acc": self.acc
+                        "best_acc": self.best_va_acc
                     }
                 )
                 # done: restore number of steps so far
                 step = res["global_step"]
                 # done: restore best acc
-                best_acc = res["acc"]
+                best_acc = res["best_acc"]
             else:
                 print("Starting from scratch...")
                 step = 0
