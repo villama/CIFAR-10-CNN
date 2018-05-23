@@ -378,7 +378,7 @@ class MyNetwork(object):
                     # best accuracy. We will only return the best W and b
                     if res["acc"] > best_acc:
                         best_acc = res["acc"]
-                        # TODO: Write best acc to TF variable
+                        # done: Write best acc to TF variable
                         self.acc_assign_op = tf.assign(self.best_va_acc, self.best_va_acc_in)
                         # Save the best model
                         self.saver_best.save(

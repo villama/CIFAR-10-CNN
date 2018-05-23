@@ -55,7 +55,7 @@ train_arg = add_argument_group("Training")
 
 
 train_arg.add_argument("--data_dir", type=str,
-                       default="/Users/kwang/Downloads/cifar-10-batches-py",
+                       default="cifar-10-batches-py",
                        help="Directory with CIFAR10 data")
 
 train_arg.add_argument("--learning_rate", type=float,
