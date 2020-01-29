@@ -1,4 +1,4 @@
-# tf-cnn
+# CIFAR-10 Convolutional Neural Net
 
 A convolutional neural network designed to classify images in the CIFAR-10 imageset. Achieves an accuracy of 0.7159 with parameter tuning. These results are detailed in the short report (see report.pdf).
 
