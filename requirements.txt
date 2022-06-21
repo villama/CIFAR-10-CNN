@@ -11,7 +11,7 @@ jedi==0.11.1
 Markdown==2.6.10
 matplotlib==2.1.1
 networkx==2.1
-numpy==1.13.3
+numpy==1.22.0
 olefile==0.44
 parso==0.1.1
 pexpect==4.3.1
